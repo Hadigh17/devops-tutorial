@@ -12,11 +12,15 @@ node {
     }
 
     stage('Test image') {
-        // Run something inside the container (no workspace mount to avoid C:/ path issue)
-        app.inside {
-            sh 'echo Running inside container'
+    steps {
+        script {
+            app.inside('--entrypoint ""') {  // run without mounting workspace
+                sh 'echo Running inside container'
+            }
         }
     }
+}
+
 
     stage('Push image') {
         // Push image to Docker Hub
