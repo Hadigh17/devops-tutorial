@@ -12,15 +12,11 @@ node {
     }
 
     stage('Test image') {
-    steps {
-        script {
-            app.inside('--entrypoint ""') {  // run without mounting workspace
-                sh 'echo Running inside container'
-            }
+        // Run something inside the container (no workspace mount!)
+        app.inside('--entrypoint ""') {
+            sh 'echo Running inside container'
         }
     }
-}
-
 
     stage('Push image') {
         // Push image to Docker Hub
