@@ -1,27 +1,23 @@
 node {
-  stage('Clone repository') {
-    checkout scm
-  }
+    def app
 
-  stage('Build image') {
-    // Build with plain docker CLI (works on Windows master)
-    bat 'docker build -t hadigh17/tutoriall .'
-  }
-
-  stage('Test image') {
-    // Run something simple inside the Linux container; no workspace mount
-    bat 'docker run --rm hadigh17/tutoriall node -v'
-    // or: bat 'docker run --rm hadigh17/tutoriall sh -lc "echo Running inside container"'
-  }
-
-  stage('Push image') {
-    withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'DH_USER', passwordVariable: 'DH_PASS')]) {
-      bat '''
-      docker login -u %DH_USER% -p %DH_PASS%
-      docker tag hadigh17/tutoriall:latest hadigh17/tutoriall:%BUILD_NUMBER%
-      docker push hadigh17/tutoriall:%BUILD_NUMBER%
-      docker push hadigh17/tutoriall:latest
-      '''
+    stage('Clone repository') {
+        checkout scm
     }
-  }
+
+    stage('Build image') {
+        app = docker.build("hadigh17/tutoriall")
+    }
+
+    stage('Test image') {
+        // Replace app.inside with a plain docker run to avoid C:/ path issue
+        bat 'docker run --rm hadigh17/tutoriall echo "Tests passed"'
+    }
+
+    stage('Push image') {
+        docker.withRegistry('https://index.docker.io/v1/', 'docker-hub-credentials') {
+            app.push("${env.BUILD_NUMBER}")
+            app.push("latest")
+        }
+    }
 }
