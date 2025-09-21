@@ -15,9 +15,14 @@ node {
     }
 
     stage('Push image') {
-        docker.withRegistry('https://registry.hub.docker.com', 'docker-hub') {
-            app.push("${env.BUILD_NUMBER}")
-            app.push("latest")
+    withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+        bat """
+            docker login -u %DOCKER_USER% -p %DOCKER_PASS%
+            docker tag hadigh17/tutoriall hadigh17/tutoriall:${env.BUILD_NUMBER}
+            docker tag hadigh17/tutoriall hadigh17/tutoriall:latest
+            docker push hadigh17/tutoriall:${env.BUILD_NUMBER}
+            docker push hadigh17/tutoriall:latest
+        """
         }
     }
 }
