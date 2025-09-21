@@ -12,11 +12,15 @@ node {
     }
 
     stage('Test image') {
-        /* Run a simple test inside the container */
-        app.inside('-w /c/Users/hadig/.jenkins/workspace/edureka-pipeline') {
-            sh 'echo Running inside container'
+    steps {
+        script {
+            app.inside {
+                sh 'echo Running inside container'
+            }
         }
     }
+}
+
 
     stage('Push image') {
         /* Push the image to Docker Hub with tags */
