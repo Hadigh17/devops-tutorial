@@ -18,8 +18,11 @@ node {
         /* Ideally, we would run a test framework against our image.
          * For this example, we're using a Volkswagen-type approach ;-) */
 
-        app.inside {
-            sh 'echo "Tests passed"'
+        steps {
+        script {
+            docker.image('hadigh17/tutoriall').inside('-w /c/Users/hadig/.jenkins/workspace/edureka-pipeline/') {
+                sh 'echo Running inside container'
+            }
         }
     }
 
