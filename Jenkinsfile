@@ -24,6 +24,7 @@ node {
                 sh 'echo Running inside container'
             }
         }
+        }
     }
 
     stage('Push image') {
